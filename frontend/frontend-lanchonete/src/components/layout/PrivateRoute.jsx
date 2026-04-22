@@ -1,28 +1,23 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { Navigate, Outlet } from 'react-router-dom'
+import { useAuth } from '../../contexts/AuthContext'
 
-export default function PrivateRoute({ requireAdmin = false }) {
-  const { user, loading } = useAuth();
+export default function PrivateRoute() {
+  const { isAuthenticated, loading } = useAuth()
 
-  // Enquanto verifica se o usuário está logado, pode exibir um loading simples
   if (loading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+      <div className="h-screen w-full flex items-center justify-center bg-secondary-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-3 border-primary-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-secondary-500 font-medium">Carregando...</p>
+        </div>
       </div>
-    );
+    )
   }
 
-  // Se não estiver logado, manda pro Login
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
   }
 
-  // Se a rota pedir Admin e o usuário for Operador, manda pro PDV
-  if (requireAdmin && user.role !== 'ADMIN') {
-    return <Navigate to="/pdv" replace />;
-  }
-
-  // Se estiver tudo OK, renderiza a página filha (Outlet)
-  return <Outlet />;
+  return <Outlet />
 }

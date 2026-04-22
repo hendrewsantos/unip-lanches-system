@@ -25,9 +25,10 @@ public class AuthDTO {
     @AllArgsConstructor
     public static class LoginResponse {
         private String token;
-        private String nome;
-        private String role;
         private Long id;
+        private String nome;
+        private String email;
+        private String role;
     }
 
     @Data

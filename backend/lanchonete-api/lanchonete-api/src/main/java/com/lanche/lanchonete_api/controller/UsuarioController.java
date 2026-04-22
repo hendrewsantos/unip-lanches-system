@@ -23,7 +23,7 @@ public class UsuarioController {
         usuario.setNome(request.getNome());
         usuario.setEmail(request.getEmail());
         usuario.setSenha(request.getSenha()); // A criptografia virá no módulo de Security
-        usuario.setRole(request.getRole() != null ? request.getRole() : Usuario.Role.CAIXA);
+        usuario.setRole(request.getRole() != null ? request.getRole() : Usuario.Role.OPERADOR);
 
         return ResponseEntity.ok(usuarioService.salvar(usuario));
     }

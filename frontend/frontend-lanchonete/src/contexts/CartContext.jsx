@@ -2,7 +2,7 @@ import { createContext, useContext, useReducer, useCallback } from 'react'
 
 const CartContext = createContext(null)
 
-const initialState = { items: {}, observacao: '' }
+const initialState = { items: {}, desconto: 0, formaPagamento: 'Dinheiro' }
 
 function cartReducer(state, action) {
   switch (action.type) {
@@ -15,6 +15,7 @@ function cartReducer(state, action) {
           [action.produto.id]: {
             produto: action.produto,
             qty: (prev?.qty ?? 0) + 1,
+            obs: prev?.obs ?? '',
           },
         },
       }
@@ -34,8 +35,18 @@ function cartReducer(state, action) {
         items: { ...state.items, [action.id]: { ...item, qty: item.qty - 1 } },
       }
     }
-    case 'SET_OBS':
-      return { ...state, observacao: action.value }
+    case 'SET_OBS': {
+      const item = state.items[action.id]
+      if (!item) return state
+      return {
+        ...state,
+        items: { ...state.items, [action.id]: { ...item, obs: action.value } },
+      }
+    }
+    case 'SET_DESCONTO':
+      return { ...state, desconto: action.value }
+    case 'SET_PAGAMENTO':
+      return { ...state, formaPagamento: action.value }
     case 'CLEAR':
       return initialState
     default:
@@ -46,24 +57,25 @@ function cartReducer(state, action) {
 export function CartProvider({ children }) {
   const [state, dispatch] = useReducer(cartReducer, initialState)
 
-  const addItem    = useCallback((produto) => dispatch({ type: 'ADD', produto }), [])
-  const removeItem = useCallback((id) => dispatch({ type: 'REMOVE', id }), [])
-  const decItem    = useCallback((id) => dispatch({ type: 'DEC', id }), [])
-  const setObs     = useCallback((value) => dispatch({ type: 'SET_OBS', value }), [])
-  const clearCart  = useCallback(() => dispatch({ type: 'CLEAR' }), [])
+  const addItem       = useCallback((produto) => dispatch({ type: 'ADD', produto }), [])
+  const removeItem    = useCallback((id) => dispatch({ type: 'REMOVE', id }), [])
+  const decItem       = useCallback((id) => dispatch({ type: 'DEC', id }), [])
+  const setItemObs    = useCallback((id, value) => dispatch({ type: 'SET_OBS', id, value }), [])
+  const setDesconto   = useCallback((value) => dispatch({ type: 'SET_DESCONTO', value }), [])
+  const setPagamento  = useCallback((value) => dispatch({ type: 'SET_PAGAMENTO', value }), [])
+  const clearCart      = useCallback(() => dispatch({ type: 'CLEAR' }), [])
 
   const entries = Object.values(state.items)
-  const totalQty  = entries.reduce((s, i) => s + i.qty, 0)
-  const totalPrice = entries.reduce((s, i) => s + i.produto.preco * i.qty, 0)
-
-  const toPayload = () => ({
-    itens: entries.map(({ produto, qty }) => ({ produtoId: produto.id, quantidade: qty, precoUnitario: produto.preco })),
-    observacao: state.observacao,
-    total: totalPrice,
-  })
+  const totalQty    = entries.reduce((s, i) => s + i.qty, 0)
+  const subtotal    = entries.reduce((s, i) => s + i.produto.preco * i.qty, 0)
+  const totalPrice  = Math.max(0, subtotal - state.desconto)
 
   return (
-    <CartContext.Provider value={{ items: state.items, entries, totalQty, totalPrice, observacao: state.observacao, addItem, removeItem, decItem, setObs, clearCart, toPayload }}>
+    <CartContext.Provider value={{
+      items: state.items, entries, totalQty, subtotal, totalPrice,
+      desconto: state.desconto, formaPagamento: state.formaPagamento,
+      addItem, removeItem, decItem, setItemObs, setDesconto, setPagamento, clearCart,
+    }}>
       {children}
     </CartContext.Provider>
   )

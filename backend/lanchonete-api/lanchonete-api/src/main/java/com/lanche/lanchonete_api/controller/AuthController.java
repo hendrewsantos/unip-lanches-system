@@ -30,7 +30,9 @@ public class AuthController {
 
         AuthDTO.LoginResponse response = new AuthDTO.LoginResponse();
         response.setToken(token);
+        response.setId(usuario.getId());
         response.setNome(usuario.getNome());
+        response.setEmail(usuario.getEmail());
         response.setRole(usuario.getRole().name());
 
         return ResponseEntity.ok(response);

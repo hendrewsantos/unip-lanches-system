@@ -40,7 +40,7 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private Role role = Role.CAIXA;
+    private Role role = Role.OPERADOR;
 
     @Column(nullable = false)
     @Builder.Default
@@ -92,6 +92,7 @@ public class Usuario implements UserDetails {
 
     public enum Role {
         ADMIN,
-        CAIXA
+        GERENTE,
+        OPERADOR
     }
 }
