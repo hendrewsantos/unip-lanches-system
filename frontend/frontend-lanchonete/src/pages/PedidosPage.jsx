@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { ClipboardList, Eye, Printer, ChevronRight, X as XIcon } from 'lucide-react'
-import { pedidos as initialPedidos, fmt } from '../data/mockData'
+import { fmt } from '../data/mockData'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import EmptyState from '../components/ui/EmptyState'
 import { useToast } from '../contexts/ToastContext'
 import { useNotifications } from '../contexts/NotificationContext'
+import { useOrders } from '../contexts/OrderContext'
 
 const TABS = ['Todos', 'Pendente', 'Em preparo', 'Pronto', 'Entregue', 'Cancelado']
 const statusVariant = { 'Pendente': 'pending', 'Em preparo': 'preparo', 'Pronto': 'pronto', 'Entregue': 'entregue', 'Cancelado': 'cancelado' }
@@ -34,8 +35,8 @@ function printReceipt(pedido) {
 export default function PedidosPage() {
   const { showToast } = useToast()
   const { addNotification } = useNotifications()
+  const { orders: allPedidos, updateOrderStatus, cancelOrder } = useOrders()
   const [activeTab, setActiveTab] = useState('Todos')
-  const [allPedidos, setAllPedidos] = useState(initialPedidos)
   const [selectedPedido, setSelectedPedido] = useState(null)
   const [statusModal, setStatusModal] = useState(null)
 
@@ -43,7 +44,7 @@ export default function PedidosPage() {
 
   const handleUpdateStatus = (pedidoId, newStatus) => {
     const pedido = allPedidos.find(p => p.id === pedidoId)
-    setAllPedidos(prev => prev.map(p => p.id === pedidoId ? { ...p, status: newStatus } : p))
+    updateOrderStatus(pedidoId, newStatus)
     showToast(`Status alterado para "${newStatus}"`, 'success')
     addNotification(`Pedido #${pedidoId} — ${pedido?.cliente} → ${newStatus}`, 'pedido')
     setStatusModal(null)
@@ -51,7 +52,7 @@ export default function PedidosPage() {
 
   const handleCancel = (pedidoId) => {
     const pedido = allPedidos.find(p => p.id === pedidoId)
-    setAllPedidos(prev => prev.map(p => p.id === pedidoId ? { ...p, status: 'Cancelado' } : p))
+    cancelOrder(pedidoId)
     showToast('Pedido cancelado', 'warning')
     addNotification(`Pedido #${pedidoId} — ${pedido?.cliente} foi CANCELADO`, 'pedido')
     setStatusModal(null)

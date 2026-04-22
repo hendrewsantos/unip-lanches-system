@@ -4,6 +4,7 @@ import {
   Tags, UsersRound, Warehouse, BarChart3, Settings, LogOut, X, Menu
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { ROLE_PERMISSIONS } from '../contexts/AuthContext'
 
 const NAV = [
   { to: '/',              icon: LayoutDashboard, label: 'Dashboard' },
@@ -17,10 +18,8 @@ const NAV = [
   { to: '/configuracoes', icon: Settings,         label: 'Configurações' },
 ]
 
-const ROLE_LABEL = { ADMIN: 'Administrador', GERENTE: 'Gerente', OPERADOR: 'Operador' }
-
 export default function Sidebar({ mobileOpen, setMobileOpen }) {
-  const { user, logout } = useAuth()
+  const { user, logout, hasAccess } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => { logout(); navigate('/login') }
@@ -49,7 +48,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto scrollbar-thin">
-        {NAV.map(({ to, icon: Icon, label }) => (
+        {NAV.filter(({ to }) => hasAccess(to)).map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
@@ -72,7 +71,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
             </div>
             <div className="min-w-0">
               <p className="text-sm font-semibold text-white truncate">{user?.nome ?? 'Usuário'}</p>
-              <p className="text-xs text-gray-500 truncate">{ROLE_LABEL[user?.role] ?? user?.role}</p>
+              <p className="text-xs text-gray-500 truncate">{ROLE_PERMISSIONS[user?.role]?.label ?? user?.role}</p>
             </div>
           </div>
           <button

@@ -3,6 +3,28 @@ import { usuarios } from '../data/mockData'
 
 const AuthContext = createContext(null)
 
+// ─── Permissões por Role ────────────────────────────────
+// Define quais rotas cada role pode acessar
+const ROLE_PERMISSIONS = {
+  ADMIN: {
+    routes: ['/', '/vendas', '/pedidos', '/produtos', '/categorias', '/clientes', '/estoque', '/relatorios', '/configuracoes'],
+    defaultRoute: '/',
+    label: 'Administrador',
+  },
+  GERENTE: {
+    routes: ['/', '/pedidos', '/produtos', '/categorias', '/estoque'],
+    defaultRoute: '/',
+    label: 'Gerente',
+  },
+  OPERADOR: {
+    routes: ['/vendas', '/pedidos', '/clientes'],
+    defaultRoute: '/vendas',
+    label: 'Operador',
+  },
+}
+
+export { ROLE_PERMISSIONS }
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem('snappdv_user')) } catch { return null }
@@ -35,8 +57,32 @@ export function AuthProvider({ children }) {
   const isAdmin = user?.role === 'ADMIN'
   const isGerente = user?.role === 'GERENTE' || isAdmin
 
+  // Verifica se o usuário tem acesso a uma rota específica
+  const hasAccess = useCallback((route) => {
+    if (!user?.role) return false
+    const perms = ROLE_PERMISSIONS[user.role]
+    if (!perms) return false
+    return perms.routes.includes(route)
+  }, [user?.role])
+
+  // Retorna a rota padrão para o role do usuário
+  const getDefaultRoute = useCallback(() => {
+    if (!user?.role) return '/login'
+    return ROLE_PERMISSIONS[user.role]?.defaultRoute ?? '/'
+  }, [user?.role])
+
+  // Retorna as rotas permitidas para o role do usuário
+  const getAllowedRoutes = useCallback(() => {
+    if (!user?.role) return []
+    return ROLE_PERMISSIONS[user.role]?.routes ?? []
+  }, [user?.role])
+
   return (
-    <AuthContext.Provider value={{ user, loading, isAuthenticated, isAdmin, isGerente, login, logout }}>
+    <AuthContext.Provider value={{
+      user, loading, isAuthenticated, isAdmin, isGerente,
+      hasAccess, getDefaultRoute, getAllowedRoutes,
+      login, logout,
+    }}>
       {children}
     </AuthContext.Provider>
   )

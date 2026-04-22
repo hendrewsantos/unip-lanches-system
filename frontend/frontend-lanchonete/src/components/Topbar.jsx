@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Bell, Search, Menu, Sun, Moon, X, ClipboardList, Package, AlertTriangle } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { ROLE_PERMISSIONS } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { useNotifications } from '../contexts/NotificationContext'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -139,7 +140,7 @@ export default function Topbar({ onMenuClick }) {
         <div className="hidden sm:flex items-center gap-3 pl-3 border-l border-gray-200 dark:border-gray-700">
           <div className="text-right">
             <p className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">{user?.nome ?? 'Usuário'}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{user?.role}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{ROLE_PERMISSIONS[user?.role]?.label ?? user?.role}</p>
           </div>
           <div className="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-orange-500/25">{initials}</div>
         </div>

@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { Search, ShoppingBag, Plus, Minus, Trash2, CreditCard, Banknote, QrCode, CheckCircle } from 'lucide-react'
 import { useCart } from '../contexts/CartContext'
 import { useToast } from '../contexts/ToastContext'
+import { useOrders } from '../contexts/OrderContext'
+import { useNotifications } from '../contexts/NotificationContext'
+import { useAuth } from '../contexts/AuthContext'
 import { produtos, fmt, formasPagamentoList } from '../data/mockData'
 import Button from '../components/ui/Button'
 
@@ -28,9 +31,14 @@ function ProductCard({ produto, inCart, onAdd }) {
 export default function PDVPage() {
   const { entries, items, totalQty, subtotal, totalPrice, desconto, formaPagamento, addItem, decItem, removeItem, clearCart, setDesconto, setPagamento } = useCart()
   const { showToast } = useToast()
+  const { createOrder } = useOrders()
+  const { addNotification } = useNotifications()
+  const { user } = useAuth()
   const [activeCat, setActiveCat] = useState('Todos')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
+  const [clienteNome, setClienteNome] = useState('')
+  const [mesaInfo, setMesaInfo] = useState('')
 
   const categories = ['Todos', ...new Set(produtos.map(p => p.categoria))]
   const filtered = produtos.filter(p => p.ativo && (activeCat === 'Todos' || p.categoria === activeCat) && (!search || p.nome.toLowerCase().includes(search.toLowerCase())))
@@ -39,8 +47,35 @@ export default function PDVPage() {
 
   const handleCheckout = async () => {
     if (!entries.length) return
-    setLoading(true); await new Promise(r => setTimeout(r, 800))
-    clearCart(); showToast('Venda finalizada com sucesso!', 'success'); setLoading(false)
+    setLoading(true)
+    await new Promise(r => setTimeout(r, 800))
+
+    // Monta os itens do pedido
+    const itensFormatados = entries.map(e => ({
+      produtoId: e.produto.id,
+      nome: e.produto.nome,
+      qty: e.qty,
+      preco: e.produto.preco,
+    }))
+
+    // Cria o pedido no contexto global
+    const newOrder = createOrder({
+      itens: itensFormatados,
+      total: totalPrice,
+      formaPagamento,
+      cliente: clienteNome || 'Cliente Balcão',
+      mesa: mesaInfo || 'Balcão',
+    })
+
+    // Notificação
+    addNotification(`Novo pedido #${newOrder.id} — ${newOrder.cliente} · ${fmt(newOrder.total)}`, 'pedido')
+
+    // Limpa tudo
+    clearCart()
+    setClienteNome('')
+    setMesaInfo('')
+    showToast(`Pedido #${newOrder.id} criado com sucesso!`, 'success')
+    setLoading(false)
   }
 
   return (
@@ -69,6 +104,14 @@ export default function PDVPage() {
         <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center"><ShoppingBag size={18} className="text-orange-600" /></div>
           <div><span className="text-sm font-bold text-gray-900 dark:text-white">Pedido Atual</span><p className="text-xs text-gray-400">{totalQty} {totalQty === 1 ? 'item' : 'itens'}</p></div>
+        </div>
+
+        {/* Cliente e Mesa */}
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 space-y-2">
+          <input value={clienteNome} onChange={e => setClienteNome(e.target.value)} placeholder="Nome do cliente (opcional)"
+            className="w-full h-8 px-3 text-xs border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200 placeholder:text-gray-400 focus:outline-none focus:border-orange-500 transition-all" />
+          <input value={mesaInfo} onChange={e => setMesaInfo(e.target.value)} placeholder="Mesa / Local (ex: Mesa 3, Balcão)"
+            className="w-full h-8 px-3 text-xs border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200 placeholder:text-gray-400 focus:outline-none focus:border-orange-500 transition-all" />
         </div>
 
         <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">

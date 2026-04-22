@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { UtensilsCrossed, Mail, KeyRound, LogIn } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { ROLE_PERMISSIONS } from '../contexts/AuthContext'
 
 const schema = z.object({
   email: z.string().email('Email inválido'),
@@ -25,7 +26,8 @@ export default function LoginPage() {
     setServerError('')
     try {
       const user = await login(values)
-      navigate(user.role === 'OPERADOR' ? '/vendas' : '/', { replace: true })
+      const defaultRoute = ROLE_PERMISSIONS[user.role]?.defaultRoute ?? '/'
+      navigate(defaultRoute, { replace: true })
     } catch {
       setServerError('Credenciais inválidas. Use email dos usuários cadastrados e senha "123456".')
     }
@@ -112,10 +114,28 @@ export default function LoginPage() {
 
           <div className="mt-6 pt-5 border-t border-gray-100">
             <p className="text-xs text-gray-400 text-center mb-3 font-semibold uppercase tracking-wide">Contas de demonstração</p>
-            <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
-              <div className="flex justify-between"><span className="font-bold text-gray-700">Admin:</span><span className="text-gray-500">admin@lanchonete.com</span></div>
-              <div className="flex justify-between"><span className="font-bold text-gray-700">Caixa:</span><span className="text-gray-500">caixa@lanchonete.com</span></div>
-              <div className="flex justify-between"><span className="font-bold text-gray-700">Cozinha:</span><span className="text-gray-500">cozinha@lanchonete.com</span></div>
+            <div className="bg-gray-50 rounded-xl p-4 space-y-3 text-sm">
+              <div>
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-gray-700">🔑 Admin (Dono)</span>
+                  <span className="text-gray-500 text-xs">admin@lanchonete.com</span>
+                </div>
+                <p className="text-[11px] text-gray-400 mt-0.5">Acesso total ao sistema</p>
+              </div>
+              <div>
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-gray-700">👨‍🍳 Cozinha (Gerente)</span>
+                  <span className="text-gray-500 text-xs">cozinha@lanchonete.com</span>
+                </div>
+                <p className="text-[11px] text-gray-400 mt-0.5">Dashboard, Pedidos, Produtos, Categorias, Estoque</p>
+              </div>
+              <div>
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-gray-700">💰 Caixa (Operador)</span>
+                  <span className="text-gray-500 text-xs">caixa@lanchonete.com</span>
+                </div>
+                <p className="text-[11px] text-gray-400 mt-0.5">PDV / Caixa, Pedidos, Clientes</p>
+              </div>
               <div className="flex justify-between border-t border-gray-200 pt-2 mt-2"><span className="font-bold text-gray-700">Senha:</span><span className="font-mono font-bold text-orange-600">123456</span></div>
             </div>
           </div>
