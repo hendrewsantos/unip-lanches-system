@@ -93,7 +93,7 @@ Este projeto foi desenvolvido em equipe, com divisão clara de responsabilidades
 
 ---
 
-## 🚀 Próximos passos
+## 🚀 Próximos passos a serem feitos no projeto
 
 - Melhorias na interface (UI/UX)  
 - Implementação de novas funcionalidades  
