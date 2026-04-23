@@ -72,12 +72,6 @@ Este projeto proporcionou uma visão prática sobre:
 
 ---
 
-## 🔗 Acesse o projeto
-
-👉 (adicione aqui o link do repositório ou deploy)
-
----
-
 ## 📸 Demonstração
 
 <p align="center">
