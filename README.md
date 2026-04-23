@@ -42,4 +42,5 @@ O projeto tem como objetivo facilitar a gestão do negócio, automatizando o con
 - VS Code
 - IntelliJ
 
+
 ---

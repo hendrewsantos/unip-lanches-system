@@ -12,6 +12,7 @@ const sizes = {
   sm: 'h-8 px-3 text-xs gap-1.5 rounded-lg',
   md: 'h-10 px-4 text-sm gap-2 rounded-lg',
   lg: 'h-12 px-6 text-base gap-2.5 rounded-lg',
+  
 }
 
 export default function Button({

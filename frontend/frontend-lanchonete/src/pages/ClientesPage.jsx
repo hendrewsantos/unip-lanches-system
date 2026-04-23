@@ -11,7 +11,9 @@ import EmptyState from '../components/ui/EmptyState'
 import { Input } from '../components/ui/Input'
 import { useToast } from '../contexts/ToastContext'
 
+
 const schema = z.object({ nome: z.string().min(2), telefone: z.string().min(8), email: z.string().email().or(z.literal('')).optional(), endereco: z.string().optional() })
+
 
 export default function ClientesPage() {
   const { showToast } = useToast()
@@ -49,10 +51,10 @@ export default function ClientesPage() {
                 <td className="px-4 py-3"><div className="flex gap-1.5"><button onClick={() => openEdit(c)} className="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-600 transition-all"><Edit2 size={13} /></button><button onClick={() => setDeleteTarget(c)} className="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition-all"><Trash2 size={13} /></button></div></td>
               </tr>
             ))}
-          </tbody>
-        </table></div></div>
+          </tbody> 
+        </table></div></div> 
       )}
-
+ 
       <Modal open={showModal} onClose={() => setShowModal(false)} title={editing ? 'Editar' : 'Novo Cliente'} size="sm">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input label="Nome" icon={UsersRound} {...register('nome')} error={errors.nome?.message} placeholder="Nome completo" />

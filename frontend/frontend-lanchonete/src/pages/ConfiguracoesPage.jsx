@@ -10,11 +10,11 @@ import { useToast } from '../contexts/ToastContext'
 import { useTheme } from '../contexts/ThemeContext'
 
 const TABS = [
-  { key: 'estabelecimento', label: 'Estabelecimento', icon: Store },
-  { key: 'impressora', label: 'Impressora', icon: Printer },
-  { key: 'usuarios', label: 'Usuários', icon: Users },
-  { key: 'sistema', label: 'Sistema', icon: Cog },
-  { key: 'integracoes', label: 'Integrações', icon: Plug },
+  { key: 'estabelecimento', label: 'Estabelecimento', icon: Store }, 
+  { key: 'impressora', label: 'Impressora', icon: Printer }, 
+  { key: 'usuarios', label: 'Usuários', icon: Users }, 
+  { key: 'sistema', label: 'Sistema', icon: Cog }, 
+  { key: 'integracoes', label: 'Integrações', icon: Plug },   
 ]
 const ROLE_STYLE = { ADMIN: 'info', GERENTE: 'warning', OPERADOR: 'success' }
 const ROLE_ICONS = { ADMIN: Shield, GERENTE: Briefcase, OPERADOR: Monitor }
@@ -108,7 +108,7 @@ export default function ConfiguracoesPage() {
             <div className="flex items-center gap-3">
               <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${dark ? 'bg-indigo-500/10 text-indigo-400' : 'bg-orange-100 text-orange-500'}`}>
                 {dark ? <Moon size={18} /> : <Sun size={18} />}
-              </div>
+              </div> 
               <div><p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Modo Escuro</p><p className="text-xs text-gray-400">Alternar entre tema claro e escuro</p></div>
             </div>
             <button onClick={toggleTheme} className={`w-11 h-6 rounded-full transition-all duration-200 ${dark ? 'bg-orange-500' : 'bg-gray-300 dark:bg-gray-600'}`}>

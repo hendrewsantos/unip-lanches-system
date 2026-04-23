@@ -16,12 +16,12 @@ export default function Card({ children, className = '', hover = false, onClick,
 
 export function CardHeader({ children, className = '' }) {
   return <div className={`flex items-center justify-between mb-4 ${className}`}>{children}</div>
-}
+} 
 
 export function CardTitle({ children, icon: Icon, className = '' }) {
   return (
     <h3 className={`flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-white ${className}`}>
-      {Icon && <Icon size={16} className="text-orange-500" />}
+      {Icon && <Icon size={16} className="text-orange-500" />}   
       {children}
     </h3>
   )
