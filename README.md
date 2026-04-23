@@ -75,8 +75,14 @@ Este projeto proporcionou uma visão prática sobre:
 ## 📸 Demonstração
 
 <p align="center">
-  <img src="LINK_DA_IMAGEM_1" width="400"/>
-  <img src="LINK_DA_IMAGEM_2" width="400"/>
+  <img src="assets/demo-frontend.jpg" width="400"/>
+  <br><em>Front-end — Dashboard do sistema</em>
+  <br><br>
+  <img src="assets/demo-backend.jpg" width="400"/>
+  <br><em>Back-end — IntelliJ IDEA</em>
+  <br><br>
+  <img src="assets/demo-banco_dados.jpg" width="400"/>
+  <br><em>Banco de Dados — API REST (Postman)</em>
 </p>
 
 ---
